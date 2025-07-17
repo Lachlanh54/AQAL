@@ -1,570 +1,113 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integral Theory: A Practical Guide to Self-Development</title>
+    <title>Teachings from a Student</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: The application is structured as a single-page scrolling experience with a fixed top navigation, guiding the user through a logical progression of concepts. It starts with a high-level introduction (Why Integral?), moves to the core theoretical components (The AQAL Framework), transitions to practical self-application (Your Integral Profile), and concludes with the real-world benefits (Real-World Integration). This structure was chosen to first build a foundational understanding, then provide a tool for personal engagement, and finally contextualize the theory's value. The user flow is designed to be educational and experiential, moving from abstract knowledge to personalized insight. -->
-    <!-- Visualization & Content Choices: 
-        - AQAL Quadrants: Goal: Organize/Inform. Method: 2x2 interactive grid (HTML/Tailwind). Interaction: Click to reveal details. Justification: Visually mirrors the model for intuitive understanding.
-        - Spiral Dynamics (Levels): Goal: Show Change/Progression. Method: Color-coded vertical list (HTML/Tailwind). Interaction: Click to expand details. Justification: Clearly illustrates the hierarchical stages.
-        - Developmental Lines: Goal: Compare/Self-Assess. Method: Radar Chart (Chart.js/Canvas). Interaction: User moves sliders to update the chart live. Justification: Provides a powerful, personalized visualization of a multi-dimensional concept.
-        - States & Types: Goal: Inform. Method: Styled cards (HTML/Tailwind). Interaction: Simple hover effects. Justification: Presents distinct concepts in a clear, digestible format.
-        - Benefits: Goal: Inform. Method: Tabbed content panes (HTML/JS). Interaction: Click tabs to switch views. Justification: Organizes detailed applications neatly.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f7f4; /* Warm off-white */
-            color: #3d3d3d;
-        }
-        .nav-active {
-            color: #2563eb;
-            font-weight: 600;
-        }
-        .spiral-card {
-            border-left-width: 8px;
-            transition: all 0.3s ease-in-out;
-        }
-        .spiral-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .quadrant {
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-        }
-        .quadrant:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-        }
-        .slider-thumb::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #2563eb;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .slider-thumb::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #2563eb;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 450px;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-        .accordion-arrow {
-            transition: transform 0.3s ease-in-out;
-        }
-        .shadow-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            background-color: #f9fafb;
-            transition: border-color 0.2s;
-        }
-        .shadow-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
-        }
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-in-out;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 450px;
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@500;700&display=swap" rel="stylesheet">
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Lora', 'serif'],
             }
+          }
         }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc; /* A gentle off-white (slate-50) */
+      }
     </style>
 </head>
-<body class="antialiased">
+<body class="text-slate-800">
 
-    <!-- Initial Pop-up Modal -->
-    <div id="welcome-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4">
-        <div class="modal-content bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-md w-full transform scale-95">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome</h2>
-            <p class="text-gray-700 mb-6">
-                This is a conceptual website created by Lachlan Hall, exploring ideas influenced by the work of Ken Wilber and other thinkers cited in the 'References' section. It is a work in progress, intended as an interactive draft to illustrate these complex theories. Your exploration is appreciated.
-            </p>
-            <button id="close-modal-btn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition">I Understand & Agree</button>
+    <header class="border-b border-slate-200">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-serif font-bold">Teachings from a Student</a>
+            <nav class="hidden md:flex space-x-6 font-semibold text-slate-600">
+                <a href="#latest" class="hover:text-blue-600">Articles</a>
+                <a href="#" class="hover:text-blue-600">Tools</a>
+                <a href="#" class="hover:text-blue-600">About</a>
+            </nav>
         </div>
-    </div>
-
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex-shrink-0">
-                    <h1 class="text-xl font-bold text-gray-800">Integral Guide</h1>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Introduction</a>
-                        <a href="#aqal" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">The 5 Keys</a>
-                        <a href="#assessment" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Self-Assessment</a>
-                        <a href="#benefits" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Application</a>
-                        <a href="#references" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">References</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
     </header>
 
-    <main>
-        <section id="intro" class="py-20 md:py-28">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">A More Complete Framework for Life.</h2>
-                <p class="mt-6 max-w-3xl mx-auto text-lg leading-8 text-gray-600">
-                    In an age of information overload, it's difficult to separate signal from noise. Integral Theory offers a way to organize the wisdom from diverse fields—from neuroscience to contemplative traditions—into a single, coherent map. This guide makes that map practical, helping you navigate your inner and outer worlds with more clarity, skill, and purpose.
-                </p>
-                <div class="mt-10">
-                    <a href="#aqal" class="rounded-md bg-blue-600 px-4 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition">Begin Exploration</a>
-                </div>
-            </div>
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <section class="text-center max-w-3xl mx-auto">
+            <h2 class="font-serif text-3xl md:text-5xl font-bold mb-4">A place for reflection and discovery.</h2>
+            <p class="text-lg text-slate-600 mb-8">
+                This is one guy's attempt to share ideas, untangle complex topics, and explore pathways to a more examined life. A beneficial timewaster, a replacement for doom-scrolling, and a catalogue of curiosity.
+            </p>
         </section>
-
-        <section id="aqal" class="py-20 md:py-24 bg-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">The 5 Keys to a Fuller Reality (AQAL)</h2>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        The core of the Integral map is AQAL (All Quadrants, Levels, Lines, States, Types). These are five fundamental elements for understanding any situation, from personal burnout to global politics. Understanding them provides a powerful diagnostic tool for your own life.
-                    </p>
-                </div>
-
-                <!-- Quadrants -->
-                <div class="mb-20">
-                    <h3 class="text-2xl font-semibold text-center mb-2">Key 1: The 4 Fundamental Perspectives</h3>
-                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Every experience has four dimensions: the subjective, objective, cultural, and systemic. A comprehensive solution always considers all four. Click a quadrant to learn more.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                        <div id="quadrant-ul" class="quadrant bg-blue-50 p-6 rounded-lg border border-blue-200">
-                            <h4 class="font-bold text-lg text-blue-800">Inner World (I)</h4>
-                            <p class="text-blue-700">Your mindset, feelings, consciousness. The domain of psychology.</p>
-                        </div>
-                        <div id="quadrant-ur" class="quadrant bg-red-50 p-6 rounded-lg border border-red-200">
-                             <h4 class="font-bold text-lg text-red-800">Body & Actions (It)</h4>
-                            <p class="text-red-700">Your brain chemistry, fitness, habits. The domain of neuroscience.</p>
-                        </div>
-                        <div id="quadrant-ll" class="quadrant bg-green-50 p-6 rounded-lg border border-green-200">
-                            <h4 class="font-bold text-lg text-green-800">Culture & Relationships (We)</h4>
-                            <p class="text-green-700">Shared values, office culture, relationships. The domain of sociology.</p>
-                        </div>
-                        <div id="quadrant-lr" class="quadrant bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-                            <h4 class="font-bold text-lg text-yellow-800">Systems & Environment (Its)</h4>
-                            <p class="text-yellow-700">The economy, technology, environment. The domain of systems theory.</p>
-                        </div>
-                    </div>
-                    <div id="quadrant-details" class="mt-6 p-6 bg-gray-100 rounded-lg max-w-4xl mx-auto min-h-[160px] transition">
-                        <h5 id="details-title" class="font-bold text-lg text-gray-800">Practical Example: "Why am I so burned out?"</h5>
-                        <p id="details-text" class="text-gray-700 mt-2"><b>I:</b> "My mindset is negative; I feel hopeless."<br><b>It:</b> "I'm only sleeping 5 hours and my cortisol is through the roof."<br><b>We:</b> "My workplace has a toxic culture of overwork."<br><b>Its:</b> "Economic pressure makes me feel like I can't slow down."<br>Burnout isn't just one thing. A real solution has to address all four dimensions.</p>
-                    </div>
-                </div>
-
-                <!-- Levels (Spiral Dynamics) -->
-                <div class="mb-20">
-                    <h3 class="text-2xl font-semibold text-center mb-2">Key 2: Stages of Psychological Maturity</h3>
-                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Research in developmental psychology shows that adults mature through predictable stages of worldview complexity. These are "centers of gravity," not rigid boxes. Understanding these stages helps decode human motivation and conflict. Click to expand.</p>
-                    <div id="spiral-container" class="space-y-4 max-w-3xl mx-auto"></div>
-                </div>
-
-                <!-- Lines -->
-                <div class="mb-20 text-center">
-                    <h3 class="text-2xl font-semibold mb-2">Key 3: Multiple Intelligences</h3>
-                    <p class="text-gray-600 mb-8 max-w-3xl mx-auto">Based on work from researchers like Howard Gardner, we know that people have multiple developmental lines that can grow unevenly. You might have a high cognitive capacity but a less-developed emotional capacity. This explains how someone can be brilliant in their field but struggle in relationships. The goal is balanced development.</p>
-                     <div class="p-6 bg-gray-100 rounded-lg max-w-2xl mx-auto">
-                        <p class="text-gray-700">The self-assessment in the next section will help you map your own unique profile of intelligences and identify potential areas for growth.</p>
-                    </div>
-                </div>
-
-                <!-- States and Types -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-semibold mb-2">Key 4: States of Consciousness</h3>
-                        <p class="text-gray-600 mb-4">States are temporary experiences, like "flow states" during deep work, or the calm from meditation. These are glimpses of different modes of awareness available to anyone. The goal of many contemplative practices is to make these beneficial states more stable and accessible.</p>
-                    </div>
-                     <div class="text-center">
-                        <h3 class="text-2xl font-semibold mb-2">Key 5: Personality Type</h3>
-                        <p class="text-gray-600 mb-4">Types are your consistent personality styles. This includes systems like Myers-Briggs or the Enneagram. They aren't better or worse, just different ways of operating. Knowing your type provides another layer of self-understanding that complements the vertical view of your development.</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="assessment" class="py-20 md:py-24">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your Integral Profile: A Practical Self-Assessment</h2>
-                    <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
-                        This tool is for personal reflection. It allows you to create a visual snapshot of your self-assessed capacities across several key areas of life. The goal is not to get a "perfect score," but to honestly identify your strengths and potential bottlenecks for growth. Use the sliders to create your profile, then explore the tools below to build a more balanced, effective life.
-                    </p>
-                </div>
-
-                <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                    <div class="w-full lg:w-1/2">
-                        <h3 class="text-xl font-semibold mb-6 text-center">Rate Your Capacities (1-10)</h3>
-                        <div id="sliders-container" class="space-y-5"></div>
-                    </div>
-                    <div class="w-full lg:w-1/2">
-                        <h3 class="text-xl font-semibold mb-6 text-center">Your Integral Profile</h3>
-                        <div class="chart-container">
-                            <canvas id="linesChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-16 text-center p-6 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
-                    <h4 class="font-bold text-lg text-blue-800">Save Your Profile</h4>
-                    <p class="text-blue-700 mt-2">Your profile is a snapshot in time. To track your progress, take a screenshot of your chart. Revisit this assessment in 3-6 months to see how your efforts have paid off.</p>
-                </div>
-
-                <div id="synthesis-section" class="mt-20">
-                    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-center mb-4">Your Starting Point</h3>
-                        <p class="text-center text-gray-600 mb-6">Based on your assessment, here is a simple, foundational practice to begin creating a more balanced profile. Lasting change starts with small, consistent action.</p>
-                        <div id="synthesis-output" class="text-center p-6 bg-gray-50 rounded-lg">
-                            <p>Adjust the sliders above to generate your starting point.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-20">
-                    <h3 class="text-2xl font-semibold text-center mb-8">A Practical Tool for Shadow Work</h3>
-                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">The "shadow" refers to the parts of ourselves we repress or deny. These parts get projected onto others, causing strong emotional reactions. This private exercise (nothing is saved) helps you reclaim these projections, leading to greater self-awareness and freedom. It's called the 3-2-1 Process.</p>
-                    <div class="max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
-                        <div>
-                            <h4 class="font-bold text-lg">Step 1 (3rd Person): Face It</h4>
-                            <p class="text-sm text-gray-600 mb-3">Think of a person who is currently bothering you. Describe them and the specific quality that triggers you.</p>
-                            <textarea id="shadow-step1" class="shadow-input" rows="3" placeholder="e.g., My boss is so arrogant. He always acts like he knows everything..."></textarea>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg">Step 2 (2nd Person): Talk to It</h4>
-                            <p class="text-sm text-gray-600 mb-3">Speak directly to this quality in the person. Ask it questions. What does it want? What is its purpose?</p>
-                            <textarea id="shadow-step2" class="shadow-input" rows="3" placeholder="e.g., Arrogance, why are you in my life? What are you trying to show me?"></textarea>
-                        </div>
-                         <div>
-                            <h4 class="font-bold text-lg">Step 3 (1st Person): Be It</h4>
-                            <p class="text-sm text-gray-600 mb-3">Now, embody this quality. Speak as if you ARE this quality. Use "I" statements. This is the key step for integration.</p>
-                            <textarea id="shadow-step3" class="shadow-input" rows="3" placeholder="e.g., I am arrogance. My gift is confidence. I protect from feeling small..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-20">
-                    <h3 class="text-2xl font-semibold text-center mb-8">Actionable Protocols for Growth</h3>
-                    <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">For a deeper dive, here are evidence-based suggestions for strengthening each developmental line. After identifying your growth edge with the tool above, you can explore these more comprehensive strategies.</p>
-                    <div id="advice-container" class="space-y-4 max-w-3xl mx-auto">
-                        <!-- Advice accordion will be populated here by JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="benefits" class="py-20 md:py-24 bg-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Practical Applications</h2>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        This framework isn't just for thinking; it's for living more effectively. Here are the practical payoffs for your life, your relationships, and your understanding of the world.
-                    </p>
-                </div>
-
+        
+        <section class="mt-16 md:mt-24 p-8 bg-white rounded-lg shadow-md border border-slate-200">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
                 <div>
-                    <div class="mb-4 border-b border-gray-200">
-                        <nav id="benefits-tabs" class="-mb-px flex flex-wrap justify-center sm:justify-start -mb-px" aria-label="Tabs">
-                            <button data-target="panel-individual" class="benefit-tab whitespace-nowrap py-4 px-2 sm:px-4 border-b-2 font-medium text-base sm:text-lg border-blue-500 text-blue-600">For You</button>
-                            <button data-target="panel-relationships" class="benefit-tab whitespace-nowrap py-4 px-2 sm:px-4 border-b-2 font-medium text-base sm:text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Relationships</button>
-                            <button data-target="panel-society" class="benefit-tab whitespace-nowrap py-4 px-2 sm:px-4 border-b-2 font-medium text-base sm:text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Society</button>
-                        </nav>
-                    </div>
-                    <div id="benefits-panels">
-                        <div id="panel-individual" class="benefit-panel">
-                            <h4 class="font-semibold text-xl mb-3">Targeted Self-Development</h4>
-                            <p class="text-gray-700">The map helps you identify your blind spots and "shadow"—the parts of yourself you deny or project onto others. By "cleaning up" this psychological baggage, you free up energy. It helps you pinpoint your next stage of growth and gives you a balanced "workout plan" (Body, Mind, Spirit, Shadow) for getting there, leading to a more whole and effective you.</p>
-                        </div>
-                        <div id="panel-relationships" class="benefit-panel hidden">
-                            <h4 class="font-semibold text-xl mb-3">Improve Communication</h4>
-                            <p class="text-gray-700">Ever feel like you're speaking a different language from a friend, partner, or family member? You probably are. By understanding their developmental stage, you can stop arguing and start communicating. Example: A parent valuing tradition (Blue) clashes with their child who values individual success (Orange). Instead of judging, you can find the shared value beneath the surface (e.g., "We both want what's best for the family, we just have different strategies"). This fosters empathy and reduces conflict.</p>
-                        </div>
-                         <div id="panel-society" class="benefit-panel hidden">
-                            <h4 class="font-semibold text-xl mb-3">Make Sense of a Complex World</h4>
-                            <p class="text-gray-700">The "culture wars" and political polarization make more sense when you see them as a clash of different value systems (Blue vs. Orange vs. Green). Each stage has valid concerns but can't see the full picture. An integral view allows you to rise above the outrage, understand the legitimate points on all sides, and focus on creating solutions that integrate the best of each worldview.</p>
-                        </div>
-                    </div>
+                    <h3 class="font-serif text-2xl md:text-3xl font-bold mb-4">Featured Interactive: A Guide to Ken Wilber's Integral Theory</h3>
+                    <p class="text-slate-600 mb-6">
+                        Dive deep into the core concepts of Integral Theory. This interactive guide explores the Four Quadrants, States of Consciousness, and Developmental Levels in a visual and easy-to-understand format.
+                    </p>
+                    <a href="ken-wilber-integral-theory.html" class="inline-block bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
+                        Launch Interactive Guide
+                    </a>
+                </div>
+                <div class="bg-slate-200 rounded-md h-64 flex items-center justify-center text-slate-500">
+                    Screenshot of your interactive project here
                 </div>
             </div>
         </section>
-
-        <section id="references" class="py-20 md:py-24">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">References & Influences</h2>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        This guide is built upon the work of many thinkers. The following list includes primary sources, critical perspectives, and practical applications that informed the content.
-                    </p>
+        <section id="latest" class="mt-20 md:mt-24">
+            <h3 class="font-serif text-2xl md:text-3xl font-bold mb-8 text-center">Latest from the Desk</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden transform hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                    <div class="p-6">
+                        <h4 class="font-serif text-xl font-bold mb-2">On the Nature of Modern Loneliness</h4>
+                        <p class="text-slate-600 mb-4 line-clamp-3">A short reflection on why we feel more disconnected than ever in a world that is hyper-connected...</p>
+                        <a href="#" class="font-semibold text-blue-600 hover:text-blue-800">Read More &rarr;</a>
+                    </div>
                 </div>
-                <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-md">
-                    <ul class="space-y-4 text-sm text-gray-700 list-decimal list-inside">
-                        <li>Beck, D. E., & Cowan, C. C. (1996). *Spiral Dynamics: Mastering Values, Leadership and Change*. Blackwell Publishing.</li>
-                        <li>Esbjörn-Hargens, S., & Zimmerman, M. E. (2009). *Integral Ecology: Uniting Multiple Perspectives on the Natural World*. Integral Books.</li>
-                        <li>Johnson, R. A. (1991). *Owning Your Own Shadow: Understanding the Dark Side of the Psyche*. HarperOne.</li>
-                        <li>Kegan, R. (1982). *The Evolving Self: Problem and Process in Human Development*. Harvard University Press.</li>
-                        <li>Wilber, K. (1977). *The Spectrum of Consciousness*. Quest Books.</li>
-                        <li>Wilber, K. (1995). *Sex, Ecology, Spirituality: The Spirit of Evolution*. Shambhala Publications.</li>
-                        <li>Wilber, K. (2000). *A Theory of Everything: An Integral Vision for Business, Politics, Science, and Spirituality*. Shambhala Publications.</li>
-                        <li>Wilber, K. (2007). *The Integral Vision: A Very Short Introduction to the Revolutionary Integral Approach to Life, God, the Universe, and Everything*. Shambhala Publications.</li>
-                        <li>Wilber, K., Patten, T., Leonard, A., & Morelli, M. (2008). *Integral Life Practice: A 21st-Century Blueprint for Physical Health, Emotional Balance, Mental Clarity, and Spiritual Awakening*. Integral Books.</li>
-                        <li>Various authors and articles from Integral Life (integrallife.com), Integral World (integralworld.net), Wikipedia, and the Stanford Encyclopedia of Philosophy were consulted for synthesis and critique.</li>
-                    </ul>
+
+                <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden transform hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                    <div class="p-6">
+                        <h4 class="font-serif text-xl font-bold mb-2">The Philosophy of 'Enough'</h4>
+                        <p class="text-slate-600 mb-4 line-clamp-3">Exploring Stoic and minimalist principles to combat the endless chase for more in career, life, and self...</p>
+                        <a href="#" class="font-semibold text-blue-600 hover:text-blue-800">Read More &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center p-6">
+                    <div class="text-center">
+                        <h4 class="font-serif text-xl font-bold text-slate-500">More in the works.</h4>
+                        <p class="text-slate-400">New thoughts coming soon.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
-            <p>An interactive exploration of Integral Theory.</p>
-            <p class="text-sm text-gray-400 mt-2">Designed for educational purposes. Not a replacement for professional psychological advice.</p>
+    <footer class="bg-white border-t border-slate-200 mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-slate-500">
+            <p>&copy; 2025 Teachings from a Student. All Rights Reserved.</p>
+            <div class="mt-4">
+                <a href="#" class="hover:text-blue-600">References</a>
+            </div>
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-
-            // Modal Logic
-            const modal = document.getElementById('welcome-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const modalContent = modal.querySelector('.modal-content');
-            
-            // Show modal on load
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-            }, 10);
-
-            closeModalBtn.addEventListener('click', () => {
-                modal.classList.add('opacity-0');
-                modalContent.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
-            });
-
-            const quadrantData = {
-                'quadrant-ul': { title: 'The "I" - Your Subjective Reality', text: 'This is your inner world: thoughts, feelings, mindset, and self-awareness. It\'s explored through introspection, journaling, and therapy. Science connection: This is the domain of psychology and phenomenology, studying the mind from the inside out.' },
-                'quadrant-ur': { title: 'The "It" - Your Objective Reality', text: 'This is everything about you that can be measured: your body, brain, hormones, and actions. It\'s explored through science and observation. Science connection: This is the domain of neuroscience, biology, and behavioral science. Think fitness trackers, blood tests, and habit tracking.' },
-                'quadrant-ll': { title: 'The "We" - Your Intersubjective Reality', text: 'This is the world of shared understanding: culture, relationships, and language. It\'s explored through communication and empathy. Science connection: This is the domain of sociology, anthropology, and linguistics, studying how shared meanings shape our reality.' },
-                'quadrant-lr': { title: 'The "Its" - Your Interobjective Reality', text: 'This is the world of systems: the economy, your environment, technology, and political structures. It\'s explored through systems analysis. Science connection: This is the domain of systems theory, economics, and ecology, studying the external networks we exist within.' }
-            };
-
-            const spiralData = [
-                { color: 'Beige', style: 'border-yellow-200 bg-yellow-50', name: 'Survivalist', description: 'Core drive: Survival. World is about instincts. Think: early humans, basic survival mode.' },
-                { color: 'Purple', style: 'border-purple-300 bg-purple-50', name: 'Tribalist', description: 'Core drive: Safety in the tribe. World is magical and mysterious. Think: tight-knit families, team loyalty, superstitions.' },
-                { color: 'Red', style: 'border-red-300 bg-red-50', name: 'Rebel', description: 'Core drive: Power and independence. World is a jungle to be conquered. Think: rebellious teens, startup disruptors, action heroes.' },
-                { color: 'Blue', style: 'border-blue-300 bg-blue-50', name: 'Loyalist', description: 'Core drive: Stability and purpose through order. World has a right way. Think: strong traditions, patriotism, organized religion.' },
-                { color: 'Orange', style: 'border-orange-300 bg-orange-50', name: 'Achiever', description: 'Core drive: Success and progress. World is a game to be won with science and strategy. Think: Wall Street, modern science, "hustle culture".' },
-                { color: 'Green', style: 'border-green-300 bg-green-50', name: 'Harmonizer', description: 'Core drive: Equality and connection. World is a web of relationships to be nurtured. Think: social justice movements, environmentalism, focus on community.' },
-                { color: 'Yellow', style: 'border-yellow-400 bg-yellow-100', name: 'Integrator', description: 'Core drive: Flexibility and systemic thinking. World is an interconnected, dynamic system. Sees the value in all previous levels.' },
-                { color: 'Turquoise', style: 'border-cyan-400 bg-cyan-100', name: 'Holist', description: 'Core drive: Global well-being. World is a single, conscious organism. Unites feeling with deep systemic knowledge.' }
-            ];
-
-            const linesData = [
-                { id: 'cognitive', label: 'Cognitive (IQ)', value: 7, practice: 'Read one page of a challenging book.', advice: `...` },
-                { id: 'emotional', label: 'Emotional (EQ)', value: 6, practice: 'Pause and name one emotion you are feeling right now.', advice: `...` },
-                { id: 'interpersonal', label: 'Interpersonal', value: 8, practice: 'Practice active listening in your next conversation.', advice: `...` },
-                { id: 'moral', label: 'Moral', value: 7, practice: 'Consider an issue from the perspective of someone you disagree with.', advice: `...` },
-                { id: 'kinesthetic', label: 'Kinesthetic', value: 5, practice: 'Do one minute of stretching, focusing on the physical sensation.', advice: `...` },
-                { id: 'spiritual', label: 'Spiritual', value: 6, practice: 'Take three conscious breaths, focusing on the feeling of being alive.', advice: `...` },
-                { id: 'productivity', label: 'Productivity', value: 8, practice: 'Identify the one most important task for tomorrow.', advice: `...` },
-            ];
-            
-            // Full advice text
-            linesData.find(l=>l.id==='cognitive').advice = `<p class="mb-2">This is your ability to think complexly and learn. To improve:</p><ul class="list-disc list-inside space-y-2"><li><b>Read challenging non-fiction:</b> Engage with books on science, philosophy, or history that stretch your understanding.</li><li><b>Practice problem-solving:</b> Engage with puzzles, strategy games (like chess or Go), or learn a complex skill like coding or a musical instrument.</li><li><b>Learn about cognitive biases:</b> Understanding common errors in thinking is the first step to overcoming them.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>Read Daniel Kahneman's "Thinking, Fast and Slow" to understand your mind's two systems.</p>`;
-            linesData.find(l=>l.id==='emotional').advice = `<p class="mb-2">Your ability to be aware of, control, and express your emotions. To improve:</p><ul class="list-disc list-inside space-y-2"><li><b>Mindfulness Meditation:</b> Practice observing your emotions without judgment. This creates a gap between feeling and reacting.</li><li><b>Journaling:</b> Write down what you feel each day. Naming your emotions is a proven technique for regulating them.</li><li><b>Seek feedback:</b> Ask a trusted friend how you come across emotionally. This can reveal blind spots.</li></ul><p class="mt-3 font-semibold">Resources:</p><p>Apps like Calm or Waking Up. Read "Emotional Intelligence" by Daniel Goleman.</p>`;
-            linesData.find(l=>l.id==='interpersonal').advice = `<p class="mb-2">Your skill in relationships and social situations. To improve:</p><ul class="list-disc list-inside space-y-2"><li><b>Practice Active Listening:</b> In your next conversation, focus solely on understanding the other person's perspective without planning your response.</li><li><b>Perspective-Taking:</b> Try to genuinely argue for a viewpoint you disagree with. This builds cognitive empathy.</li><li><b>Join a Group:</b> A club like Toastmasters or a team sport provides a safe environment to practice social skills.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>Read "How to Win Friends and Influence People" by Dale Carnegie for timeless principles.</p>`;
-            linesData.find(l=>l.id==='moral').advice = `<p class="mb-2">The scope of what and who you care about. To expand:</p><ul class="list-disc list-inside space-y-2"><li><b>Study Ethical Frameworks:</b> Learn about utilitarianism, deontology, and virtue ethics to add sophistication to your moral reasoning.</li><li><b>Engage with Different Cultures:</b> Travel, read, or watch documentaries about cultures vastly different from your own to expand your circle of care.</li><li><b>Volunteer:</b> Directly helping others who are in different life circumstances is a powerful way to build compassion.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>Explore the Stanford Encyclopedia of Philosophy online for clear articles on ethical theories.</p>`;
-            linesData.find(l=>l.id==='kinesthetic').advice = `<p class="mb-2">Your body's intelligence and your connection to it. To develop:</p><ul class="list-disc list-inside space-y-2"><li><b>Try a Mind-Body Practice:</b> Yoga, Tai Chi, or martial arts are designed to increase the connection between mind and physical movement.</li><li><b>Focus on Form:</b> Whether lifting weights or running, pay close attention to the physical sensations and mechanics of the movement.</li><li><b>Dance:</b> Moving your body to music without a specific goal can be a powerful way to increase bodily awareness and expression.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>Apps like Down Dog for yoga or Peloton for guided workouts can be great starting points.</p>`;
-            linesData.find(l=>l.id==='spiritual').advice = `<p class="mb-2">Your connection to meaning, purpose, and ultimate concerns. To explore:</p><ul class="list-disc list-inside space-y-2"><li><b>Contemplative Practice:</b> This can be meditation, prayer, or simply spending quiet time in nature, reflecting on life's big questions.</li><li><b>Read Wisdom Literature:</b> Explore texts from various traditions (e.g., Stoicism, Buddhism, Taoism) to find what resonates.</li><li><b>Practice Gratitude:</b> Actively noting what you are grateful for has been shown to increase well-being and a sense of connection.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>The Waking Up app by Sam Harris offers a secular, neuroscience-based approach to meditation.</p>`;
-            linesData.find(l=>l.id==='productivity').advice = `<p class="mb-2">Your ability to effectively manage your time, energy, and attention. To optimize:</p><ul class="list-disc list-inside space-y-2"><li><b>Time-Blocking:</b> Schedule your day in specific blocks of time for specific tasks to reduce decision fatigue.</li><li><b>Identify Your "One Thing":</b> Each day, decide on the single most important task and complete it first.</li><li><b>Optimize Your Environment:</b> Design your workspace to minimize distractions and make desired behaviors easier.</li></ul><p class="mt-3 font-semibold">Resource:</p><p>Read "Atomic Habits" by James Clear for a practical system on building good habits and breaking bad ones.</p>`;
-
-
-            // Navigation scroll highlighting
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-link');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => {
-                            link.classList.toggle('nav-active', link.getAttribute('href').substring(1) === entry.target.id);
-                        });
-                    }
-                });
-            }, { rootMargin: '-30% 0px -70% 0px' });
-            sections.forEach(section => observer.observe(section));
-
-            // Quadrant Interaction
-            const detailsTitle = document.getElementById('details-title');
-            const detailsText = document.getElementById('details-text');
-            document.querySelectorAll('.quadrant').forEach(quadrant => {
-                quadrant.addEventListener('click', () => {
-                    const data = quadrantData[quadrant.id];
-                    detailsTitle.textContent = data.title;
-                    detailsText.innerHTML = data.text;
-                });
-            });
-
-            // Spiral Dynamics Population
-            const spiralContainer = document.getElementById('spiral-container');
-            spiralData.forEach(level => {
-                const card = document.createElement('div');
-                card.className = `spiral-card p-4 rounded-lg cursor-pointer ${level.style}`;
-                card.innerHTML = `<h5 class="font-bold">${level.color}: The ${level.name}</h5><p class="text-sm hidden mt-2">${level.description}</p>`;
-                card.addEventListener('click', () => card.querySelector('p').classList.toggle('hidden'));
-                spiralContainer.appendChild(card);
-            });
-
-            // Lines Radar Chart & Synthesis
-            const slidersContainer = document.getElementById('sliders-container');
-            const synthesisOutput = document.getElementById('synthesis-output');
-            const ctx = document.getElementById('linesChart').getContext('2d');
-            let linesChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: linesData.map(l => l.label),
-                    datasets: [{
-                        label: 'Self-Assessment',
-                        data: linesData.map(l => l.value),
-                        fill: true,
-                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                        borderColor: 'rgb(37, 99, 235)',
-                        pointBackgroundColor: 'rgb(37, 99, 235)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(37, 99, 235)'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: { r: { angleLines: { color: 'rgba(0, 0, 0, 0.1)' }, grid: { color: 'rgba(0, 0, 0, 0.1)' }, pointLabels: { font: { size: 12, weight: '500' }, padding: 10 }, min: 0, max: 10, ticks: { stepSize: 2, backdropColor: 'rgba(0,0,0,0)', color: '#6b7280' } } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-            
-            function updateApp() {
-                // Update chart
-                linesChart.data.datasets[0].data = linesData.map(line => document.getElementById(line.id).value);
-                linesChart.update();
-
-                // Update synthesis
-                const currentValues = linesData.map(line => ({ ...line, value: parseInt(document.getElementById(line.id).value) }));
-                currentValues.sort((a, b) => a.value - b.value);
-                const lowestLine = currentValues[0];
-                
-                synthesisOutput.innerHTML = `
-                    <p class="text-gray-700">Your primary growth edge appears to be in the <strong class="text-blue-600">${lowestLine.label}</strong> line.</p>
-                    <p class="mt-4 font-semibold text-lg">Your Foundational Practice:</p>
-                    <p class="mt-1 text-gray-800">"${lowestLine.practice}"</p>
-                `;
-            }
-
-            linesData.forEach(line => {
-                const sliderWrapper = document.createElement('div');
-                sliderWrapper.innerHTML = `
-                    <label for="${line.id}" class="flex justify-between items-center text-sm font-medium text-gray-700">${line.label} <span id="${line.id}-value" class="font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">${line.value}</span></label>
-                    <input type="range" id="${line.id}" name="${line.id}" min="1" max="10" value="${line.value}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb mt-1">
-                `;
-                slidersContainer.appendChild(sliderWrapper);
-                document.getElementById(line.id).addEventListener('input', (e) => {
-                    document.getElementById(`${line.id}-value`).textContent = e.target.value;
-                    updateApp();
-                });
-            });
-
-            // Advice Accordion
-            const adviceContainer = document.getElementById('advice-container');
-            linesData.forEach(line => {
-                const item = document.createElement('div');
-                item.className = 'border border-gray-200 rounded-lg';
-                item.innerHTML = `
-                    <button class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 bg-gray-50 hover:bg-gray-100">
-                        <span>${line.label}</span>
-                        <svg class="accordion-arrow w-5 h-5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="p-4 text-gray-700 bg-white">${line.advice}</div>
-                    </div>
-                `;
-                adviceContainer.appendChild(item);
-            });
-
-            adviceContainer.addEventListener('click', (e) => {
-                const header = e.target.closest('.accordion-header');
-                if (!header) return;
-
-                const content = header.nextElementSibling;
-                const arrow = header.querySelector('.accordion-arrow');
-
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                    arrow.style.transform = 'rotate(0deg)';
-                } else {
-                    document.querySelectorAll('.accordion-content').forEach(el => el.style.maxHeight = null);
-                    document.querySelectorAll('.accordion-arrow').forEach(el => el.style.transform = 'rotate(0deg)');
-                    content.style.maxHeight = content.scrollHeight + "px";
-                    arrow.style.transform = 'rotate(180deg)';
-                }
-            });
-
-
-            // Benefits Tabs
-            const tabs = document.querySelectorAll('.benefit-tab');
-            const panels = document.querySelectorAll('.benefit-panel');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => {
-                        t.classList.remove('border-blue-500', 'text-blue-600');
-                        t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                    });
-                    tab.classList.add('border-blue-500', 'text-blue-600');
-                    tab.classList.remove('border-transparent', 'text-gray-500');
-
-                    panels.forEach(panel => {
-                        panel.classList.toggle('hidden', panel.id !== tab.dataset.target);
-                    });
-                });
-            });
-
-            // Initial call to set up the synthesis block
-            updateApp();
-        });
-    </script>
 </body>
 </html>
